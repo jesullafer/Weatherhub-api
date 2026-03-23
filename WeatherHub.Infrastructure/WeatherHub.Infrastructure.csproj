@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WeatherHub.Application\WeatherHub.Application.csproj" />
     <ProjectReference Include="..\WeatherHub.Domain\WeatherHub.Domain.csproj" />
   </ItemGroup>
