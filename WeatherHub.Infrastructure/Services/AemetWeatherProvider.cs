@@ -25,7 +25,7 @@ public sealed class AemetWeatherProvider : IWeatherProvider
 
     public async Task<Weather?> GetByCityAsync(string city, CancellationToken cancellationToken = default)
     {
-        // TODO: map city name to AEMET municipality code instead of using Madrid fixed code.               
+        // TODO: map city name to AEMET municipality code instead of using Madrid fixed code.    
         var cityCode = await _cityCodeService.GetCode(city);
 
         if (cityCode == null)
@@ -39,7 +39,7 @@ public sealed class AemetWeatherProvider : IWeatherProvider
             throw new AppException($"Failed to retrieve data from AEMET.", 503);
 
         if (response.Content is null)
-            throw new InvalidOperationException("AEMET response content is null.");
+            throw new AppException("AEMET response content is null.", 502);
 
         var json = await response.Content.ReadAsStringAsync(cancellationToken);
 

@@ -1,3 +1,4 @@
+using Serilog;
 using System.Text;
 using WeatherHub.Api.Middleware;
 using WeatherHub.Application.Abstractions;
@@ -7,7 +8,13 @@ using WeatherHub.Infrastructure.Services;
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -22,18 +22,20 @@ namespace WeatherHub.Api.Middleware
             catch (Exception ex)
             {
                 context.Response.ContentType = "application/json";
-                var message = "Internal server error";
+                var responseMessage = "Internal server error";
 
                 if (ex is AppException appException)
                 {
+                    _logger.LogWarning(ex, "Handled application error: {Message}", ex.Message);
                     context.Response.StatusCode = appException.StatusCode;  
-                    message = appException.Message;
+                    responseMessage = appException.Message;
                 } else
                 {
+                    _logger.LogError(ex, "Unhandled exception on {Path}", context.Request.Path);
                     context.Response.StatusCode = 500;
                 }
 
-                await context.Response.WriteAsJsonAsync(new { message = message, statusCode = context.Response.StatusCode });
+                await context.Response.WriteAsJsonAsync(new { message = responseMessage, statusCode = context.Response.StatusCode });
             }
         }
     }
