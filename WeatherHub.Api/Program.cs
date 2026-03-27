@@ -1,4 +1,5 @@
 using System.Text;
+using WeatherHub.Api.Middleware;
 using WeatherHub.Application.Abstractions;
 using WeatherHub.Application.UseCases.GetWeatherByCity;
 using WeatherHub.Infrastructure.Options;
@@ -22,6 +23,7 @@ builder.Services.Configure<AemetOptions>(
 builder.Services.AddHttpClient<AemetWeatherProvider>();
 
 builder.Services.AddScoped<IWeatherProvider, AemetWeatherProvider>();
+builder.Services.AddScoped<ICityCodeService, CityCodeService>();
 
 var app = builder.Build();
 
@@ -33,6 +35,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
