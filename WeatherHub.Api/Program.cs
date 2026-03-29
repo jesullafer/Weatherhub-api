@@ -1,3 +1,4 @@
+using FluentValidation;
 using Serilog;
 using System.Text;
 using WeatherHub.Api.Middleware;
@@ -21,6 +22,8 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddValidatorsFromAssemblyContaining<GetWeatherByCityValidator>();
 
 builder.Services.AddScoped<GetWeatherByCityQueryHandler>();
 

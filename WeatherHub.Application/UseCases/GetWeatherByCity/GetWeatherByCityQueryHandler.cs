@@ -1,4 +1,6 @@
-﻿using WeatherHub.Application.Abstractions;
+﻿using FluentValidation;
+using WeatherHub.Application.Abstractions;
+using WeatherHub.Application.Common.Exceptions;
 using WeatherHub.Application.DTOs;
 
 namespace WeatherHub.Application.UseCases.GetWeatherByCity;
@@ -6,18 +8,25 @@ namespace WeatherHub.Application.UseCases.GetWeatherByCity;
 public sealed class GetWeatherByCityQueryHandler
 {
     private readonly IWeatherProvider _weatherProvider;
+    private readonly IValidator<GetWeatherByCityQuery> _validator;
 
-    public GetWeatherByCityQueryHandler(IWeatherProvider weatherProvider)
+    public GetWeatherByCityQueryHandler(IWeatherProvider weatherProvider, IValidator<GetWeatherByCityQuery> validator)
     {
         _weatherProvider = weatherProvider;
+        _validator = validator;
     }
 
-    public async Task<WeatherResponseDto?> HandleAsync(string city, CancellationToken cancellationToken = default)
+    public async Task<WeatherResponseDto?> HandleAsync(GetWeatherByCityQuery query, CancellationToken cancellationToken = default)
     {
-        var weather = await _weatherProvider.GetByCityAsync(city, cancellationToken);
+        var validationResult = await _validator.ValidateAsync(query);
+
+        if (!validationResult.IsValid)        
+            throw new AppException(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)), 400);
+
+        var weather = await _weatherProvider.GetByCityAsync(query.City, cancellationToken);
 
         if (weather is null)
-            return null;
+            throw new AppException($"Weather not found for city '{query.City}'", 404);
 
         return new WeatherResponseDto
         {
@@ -26,5 +35,6 @@ public sealed class GetWeatherByCityQueryHandler
             Description = weather.Description,
             Humidity = weather.Humidity
         };
+
     }
 }

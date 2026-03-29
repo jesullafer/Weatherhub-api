@@ -17,13 +17,9 @@ public sealed class WeatherController : ControllerBase
     [HttpGet("by-city")]
     public async Task<IActionResult> GetByCity([FromQuery] string city, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(city))
-            return BadRequest(new { message = "The city parameter is required." });
+        var query = new GetWeatherByCityQuery(city);
 
-        var result = await _handler.HandleAsync(city, cancellationToken);
-
-        if (result is null)
-            return NotFound(new { message = $"No weather data found for city '{city}'." });
+        var result = await _handler.HandleAsync(query, cancellationToken);        
 
         return Ok(result);
     }
