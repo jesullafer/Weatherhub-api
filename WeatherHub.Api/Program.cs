@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using System.Text;
 using WeatherHub.Api.Middleware;
@@ -31,9 +32,18 @@ builder.Services.Configure<AemetOptions>(
     builder.Configuration.GetSection("Aemet"));
 
 builder.Services.AddHttpClient<AemetWeatherProvider>();
-
-builder.Services.AddScoped<IWeatherProvider, AemetWeatherProvider>();
 builder.Services.AddScoped<ICityCodeService, CityCodeService>();
+
+builder.Services.AddMemoryCache();
+
+builder.Services.AddScoped<IWeatherProvider>(sp =>
+{
+    var aemetProvider = sp.GetRequiredService<AemetWeatherProvider>();
+    var cache = sp.GetRequiredService<IMemoryCache>();
+    var logger = sp.GetRequiredService<ILogger<CachedWeatherProvider>>();
+
+    return new CachedWeatherProvider(aemetProvider, cache, logger);
+});
 
 var app = builder.Build();
 
