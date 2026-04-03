@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
+using MediatR;
 using WeatherHub.Application.Abstractions;
 using WeatherHub.Application.Common.Exceptions;
 using WeatherHub.Application.DTOs;
 
 namespace WeatherHub.Application.UseCases.GetWeatherByCity;
 
-public sealed class GetWeatherByCityQueryHandler
+public sealed class GetWeatherByCityQueryHandler : IRequestHandler<GetWeatherByCityQuery, WeatherDto?>
 {
     private readonly IWeatherProvider _weatherProvider;
     private readonly IValidator<GetWeatherByCityQuery> _validator;
@@ -14,9 +15,9 @@ public sealed class GetWeatherByCityQueryHandler
     {
         _weatherProvider = weatherProvider;
         _validator = validator;
-    }
+    }    
 
-    public async Task<WeatherResponseDto?> HandleAsync(GetWeatherByCityQuery query, CancellationToken cancellationToken = default)
+    public async Task<WeatherDto?> Handle(GetWeatherByCityQuery query, CancellationToken cancellationToken = default)
     {
         var validationResult = await _validator.ValidateAsync(query);
 
@@ -28,7 +29,7 @@ public sealed class GetWeatherByCityQueryHandler
         if (weather is null)
             throw new AppException($"Weather not found for city '{query.City}'", 404);
 
-        return new WeatherResponseDto
+        return new WeatherDto
         {
             City = weather.City,
             Temperature = weather.Temperature,

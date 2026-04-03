@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using WeatherHub.Application.UseCases.GetWeatherByCity;
 
 namespace WeatherHub.Api.Controllers;
@@ -6,12 +7,12 @@ namespace WeatherHub.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 public sealed class WeatherController : ControllerBase
-{
-    private readonly GetWeatherByCityQueryHandler _handler;
+{    
+    private readonly IMediator _mediator;
 
-    public WeatherController(GetWeatherByCityQueryHandler handler)
+    public WeatherController(IMediator mediator)
     {
-        _handler = handler;
+        _mediator = mediator;
     }
 
     [HttpGet("by-city")]
@@ -19,7 +20,15 @@ public sealed class WeatherController : ControllerBase
     {
         var query = new GetWeatherByCityQuery(city);
 
-        var result = await _handler.HandleAsync(query, cancellationToken);        
+        var result = await _mediator.Send(query, cancellationToken);         
+
+        return Ok(result);
+    }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchCities([FromQuery] string query, CancellationToken cancellationToken) 
+    { 
+        var result = await _mediator.Send(new SearchCitiesQuery(query), cancellationToken);
 
         return Ok(result);
     }

@@ -1,6 +1,9 @@
-﻿namespace WeatherHub.Application.UseCases.GetWeatherByCity
+﻿using MediatR;
+using WeatherHub.Application.DTOs;
+
+namespace WeatherHub.Application.UseCases.GetWeatherByCity
 {
-    public  class GetWeatherByCityQuery
+    public  class GetWeatherByCityQuery : IRequest<WeatherDto?>
     {
         public string City { get; }
 
