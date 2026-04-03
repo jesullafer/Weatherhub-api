@@ -12,6 +12,7 @@ Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
+    .WriteTo.Debug()
     .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,9 @@ builder.Services.AddScoped<GetWeatherByCityQueryHandler>();
 
 builder.Services.Configure<AemetOptions>(
     builder.Configuration.GetSection("Aemet"));
+
+builder.Services.Configure<CacheOptions>(
+    builder.Configuration.GetSection("Cache"));
 
 builder.Services.AddHttpClient<AemetWeatherProvider>();
 builder.Services.AddScoped<ICityCodeService, CityCodeService>();
