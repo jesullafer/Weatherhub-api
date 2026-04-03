@@ -1,10 +1,12 @@
 using FluentValidation;
+using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Serilog;
 using System.Text;
 using WeatherHub.Api.Middleware;
 using WeatherHub.Application.Abstractions;
+using WeatherHub.Application.Common.Behaviors;
 using WeatherHub.Application.UseCases.GetWeatherByCity;
 using WeatherHub.Infrastructure.Options;
 using WeatherHub.Infrastructure.Services;
@@ -54,6 +56,8 @@ builder.Services.AddScoped<IWeatherProvider>(sp =>
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(GetWeatherByCityQueryHandler).Assembly));
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 var app = builder.Build();
 

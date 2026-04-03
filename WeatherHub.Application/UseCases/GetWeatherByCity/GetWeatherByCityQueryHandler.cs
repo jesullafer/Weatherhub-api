@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using WeatherHub.Application.Abstractions;
 using WeatherHub.Application.Common.Exceptions;
 using WeatherHub.Application.DTOs;
@@ -9,21 +8,14 @@ namespace WeatherHub.Application.UseCases.GetWeatherByCity;
 public sealed class GetWeatherByCityQueryHandler : IRequestHandler<GetWeatherByCityQuery, WeatherDto?>
 {
     private readonly IWeatherProvider _weatherProvider;
-    private readonly IValidator<GetWeatherByCityQuery> _validator;
 
-    public GetWeatherByCityQueryHandler(IWeatherProvider weatherProvider, IValidator<GetWeatherByCityQuery> validator)
+    public GetWeatherByCityQueryHandler(IWeatherProvider weatherProvider)
     {
         _weatherProvider = weatherProvider;
-        _validator = validator;
     }    
 
     public async Task<WeatherDto?> Handle(GetWeatherByCityQuery query, CancellationToken cancellationToken = default)
-    {
-        var validationResult = await _validator.ValidateAsync(query);
-
-        if (!validationResult.IsValid)        
-            throw new AppException(string.Join(", ", validationResult.Errors.Select(e => e.ErrorMessage)), 400);
-
+    {        
         var weather = await _weatherProvider.GetByCityAsync(query.City, cancellationToken);
 
         if (weather is null)
@@ -36,6 +28,5 @@ public sealed class GetWeatherByCityQueryHandler : IRequestHandler<GetWeatherByC
             Description = weather.Description,
             Humidity = weather.Humidity
         };
-
     }
 }
