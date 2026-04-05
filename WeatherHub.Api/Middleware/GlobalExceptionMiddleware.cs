@@ -1,4 +1,5 @@
 ﻿using WeatherHub.Application.Common.Exceptions;
+using WeatherHub.Application.Common.Models;
 
 namespace WeatherHub.Api.Middleware
 {
@@ -21,21 +22,25 @@ namespace WeatherHub.Api.Middleware
             }
             catch (Exception ex)
             {
-                context.Response.ContentType = "application/json";
-                var responseMessage = "Internal server error";
+                context.Response.ContentType = "application/json";                
 
                 if (ex is AppException appException)
                 {
                     _logger.LogWarning(ex, "Handled application error: {Message}", ex.Message);
-                    context.Response.StatusCode = appException.StatusCode;  
-                    responseMessage = appException.Message;
+                    context.Response.StatusCode = appException.StatusCode;
+
+                    var response = ApiResponse<object>.Fail([ex.Message]);
+
+                    await context.Response.WriteAsJsonAsync(response);
                 } else
                 {
                     _logger.LogError(ex, "Unhandled exception on {Path}", context.Request.Path);
                     context.Response.StatusCode = 500;
-                }
 
-                await context.Response.WriteAsJsonAsync(new { message = responseMessage, statusCode = context.Response.StatusCode });
+                    var response = ApiResponse<object>.Fail(["Internal server error"]);
+
+                    await context.Response.WriteAsJsonAsync(response);
+                }                
             }
         }
     }
