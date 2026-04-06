@@ -25,4 +25,8 @@ public sealed class Weather
         Description = description;
         Humidity = humidity;
     }
+
+    public bool IsCold => Temperature.IsFreezing;
+
+    public bool IsHumid => Humidity > 70;
 }
