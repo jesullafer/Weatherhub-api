@@ -26,7 +26,9 @@ public sealed class GetWeatherByCityQueryHandler : IRequestHandler<GetWeatherByC
             City = weather.City,
             Temperature = weather.Temperature.Celsius,
             Description = weather.Description,
-            Humidity = weather.Humidity
+            Humidity = weather.Humidity,
+            IsFreezing = weather.Temperature.IsFreezing,
+            IsHot = weather.Temperature.IsHot
         };
     }
 }

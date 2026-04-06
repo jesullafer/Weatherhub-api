@@ -6,4 +6,6 @@ public sealed class WeatherDto
     public decimal Temperature { get; init; }
     public string Description { get; init; } = default!;
     public int Humidity { get; init; }
+    public bool IsFreezing { get; set; }
+    public bool IsHot { get; set; }
 }
