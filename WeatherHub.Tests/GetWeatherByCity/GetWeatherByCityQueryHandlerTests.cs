@@ -12,51 +12,15 @@ namespace WeatherHub.Tests.GetWeatherByCity
     public  class GetWeatherByCityQueryHandlerTests
     {
         [Fact]
-        public async Task HandleAsync_ShouldThrowAppException_WhenValidationFails()
-        {            
-            var weatherProviderMock = new Mock<IWeatherProvider>();
-            var validatorMock = new Mock<IValidator<GetWeatherByCityQuery>>();
-            var query = new GetWeatherByCityQuery("A"); 
-
-            var validationFailures = new List<ValidationFailure>
-            {
-                new ValidationFailure("City", "City must have at least 2 characters")
-            };
-
-            var validationResult = new ValidationResult(validationFailures);
-
-            validatorMock
-                .Setup(v => v.ValidateAsync(query, default))
-                .ReturnsAsync(validationResult);
-
-            var handler = new GetWeatherByCityQueryHandler(
-                weatherProviderMock.Object,
-                validatorMock.Object
-            );
-
-            var exception = await Assert.ThrowsAsync<AppException>(() =>
-                handler.HandleAsync(query)
-            );
-
-            Assert.Equal(400, exception.StatusCode);
-            Assert.Contains("City must have at least 2 characters", exception.Message);
-        }
-
-        [Fact]
-        public async Task HandleAsync_ShouldReturnWeatherResponseDto_WhenRequestIsValid()
+        public async Task Handle_ShouldReturnWeatherResponseDto_WhenRequestIsValid()
         {
             var weatherProviderMock = new Mock<IWeatherProvider>();
-            var validatorMock = new Mock<IValidator<GetWeatherByCityQuery>>();
 
-            var query = new GetWeatherByCityQuery("Madrid");
-
-            validatorMock
-                .Setup(v => v.ValidateAsync(query, default))
-                .ReturnsAsync(new ValidationResult());
+            var query = new GetWeatherByCityQuery("Madrid");            
            
             var weather = new Weather(
                 city: "Madrid",
-                temperature: 25,
+                temperature: new Domain.ValueObjects.Temperature(25),
                 description: "Soleado",
                 humidity: 40
             );
@@ -66,17 +30,18 @@ namespace WeatherHub.Tests.GetWeatherByCity
                 .ReturnsAsync(weather);
 
             var handler = new GetWeatherByCityQueryHandler(
-                weatherProviderMock.Object,
-                validatorMock.Object
+                weatherProviderMock.Object
             );
 
-            var result = await handler.HandleAsync(query);
+            var result = await handler.Handle(query);
 
             Assert.NotNull(result);
             Assert.Equal("Madrid", result.City);
             Assert.Equal(25, result.Temperature);
             Assert.Equal("Soleado", result.Description);
             Assert.Equal(40, result.Humidity);
+            Assert.False(result.IsFreezing);
+            Assert.False(result.IsHot);
         }
 
         [Fact]
@@ -87,10 +52,6 @@ namespace WeatherHub.Tests.GetWeatherByCity
 
             var query = new GetWeatherByCityQuery("VillaArriba");
 
-            validatorMock
-                .Setup(v => v.ValidateAsync(query, default))
-                .ReturnsAsync(new ValidationResult());
-
             Weather? weather = null;
 
             weatherProviderMock
@@ -98,12 +59,11 @@ namespace WeatherHub.Tests.GetWeatherByCity
                 .ReturnsAsync(weather);
 
             var handler = new GetWeatherByCityQueryHandler(
-                weatherProviderMock.Object,
-                validatorMock.Object
+                weatherProviderMock.Object
             );           
 
             var exception = await Assert.ThrowsAsync<AppException>(() =>
-                 handler.HandleAsync(query)
+                 handler.Handle(query)
              );
 
             weatherProviderMock.Verify(
