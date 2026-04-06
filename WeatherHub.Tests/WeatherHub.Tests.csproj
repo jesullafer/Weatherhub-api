@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WeatherHub.Application\WeatherHub.Application.csproj" />
+    <ProjectReference Include="..\WeatherHub.Domain\WeatherHub.Domain.csproj" />
   </ItemGroup>
 
 </Project>

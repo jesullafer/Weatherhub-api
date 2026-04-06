@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using Moq;
 using WeatherHub.Application.Abstractions;
 using WeatherHub.Application.Common.Exceptions;
 using WeatherHub.Application.UseCases.GetWeatherByCity;
 using WeatherHub.Domain.Entities;
+using WeatherHub.Domain.ValueObjects;
 
 namespace WeatherHub.Tests.GetWeatherByCity
 {
@@ -20,7 +20,7 @@ namespace WeatherHub.Tests.GetWeatherByCity
            
             var weather = new Weather(
                 city: "Madrid",
-                temperature: new Domain.ValueObjects.Temperature(25),
+                temperature: new Temperature(25),
                 description: "Soleado",
                 humidity: 40
             );
