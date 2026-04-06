@@ -1,13 +1,15 @@
-﻿namespace WeatherHub.Domain.Entities;
+﻿using WeatherHub.Domain.ValueObjects;
+
+namespace WeatherHub.Domain.Entities;
 
 public sealed class Weather
 {
     public string City { get; private set; }
-    public decimal Temperature { get; private set; }
+    public Temperature Temperature { get; private set; }
     public string Description { get; private set; }
     public int Humidity { get; private set; }
 
-    public Weather(string city, decimal temperature, string description, int humidity)
+    public Weather(string city, Temperature temperature, string description, int humidity)
     {
         if (string.IsNullOrWhiteSpace(city))
             throw new ArgumentException("City cannot be empty.", nameof(city));

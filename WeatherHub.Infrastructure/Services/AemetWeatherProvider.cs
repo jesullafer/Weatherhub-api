@@ -3,6 +3,7 @@ using System.Text.Json;
 using WeatherHub.Application.Abstractions;
 using WeatherHub.Application.Common.Exceptions;
 using WeatherHub.Domain.Entities;
+using WeatherHub.Domain.ValueObjects;
 using WeatherHub.Infrastructure.Options;
 
 namespace WeatherHub.Infrastructure.Services;
@@ -64,7 +65,7 @@ public sealed class AemetWeatherProvider : IWeatherProvider
 
         var cityName = root.GetProperty("nombre").GetString() ?? city;
 
-        var temperatura = root
+        var temperature = root
             .GetProperty("prediccion")
             .GetProperty("dia")[0]
             .GetProperty("temperatura")
@@ -73,8 +74,8 @@ public sealed class AemetWeatherProvider : IWeatherProvider
 
         return new Weather(
             city: cityName,
-            temperature: temperatura,
-            description: "Datos AEMET",
+            temperature: new Temperature(temperature),
+            description: "AEMET Data",
             humidity: 50
         );
     }

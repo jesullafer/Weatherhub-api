@@ -24,7 +24,7 @@ public sealed class GetWeatherByCityQueryHandler : IRequestHandler<GetWeatherByC
         return new WeatherDto
         {
             City = weather.City,
-            Temperature = weather.Temperature,
+            Temperature = weather.Temperature.Celsius,
             Description = weather.Description,
             Humidity = weather.Humidity
         };
