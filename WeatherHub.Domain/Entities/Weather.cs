@@ -26,7 +26,9 @@ public sealed class Weather
         Humidity = humidity;
     }
 
-    public bool IsCold => Temperature.IsFreezing;
+    public bool IsFreezing => Temperature.IsFreezing;
 
     public bool IsHumid => Humidity > 70;
+
+    public bool IsPleasant => !IsFreezing && !Temperature.IsHot;
 }
