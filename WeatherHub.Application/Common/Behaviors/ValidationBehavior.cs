@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace WeatherHub.Application.Common.Behaviors
 {
     using FluentValidation;
+    using FluentValidation.Results;
     using MediatR;
     using WeatherHub.Application.Common.Exceptions;
 
@@ -34,8 +35,8 @@ namespace WeatherHub.Application.Common.Behaviors
                     _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
 
                 var failures = validationResults
-                    .SelectMany(r => r.Errors)
-                    .Where(f => f != null)
+                    .Where(r => r != null)
+                    .SelectMany(r => r.Errors ?? Enumerable.Empty<ValidationFailure>())
                     .ToList();
 
                 if (failures.Count != 0)
