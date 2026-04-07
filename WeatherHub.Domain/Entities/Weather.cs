@@ -8,14 +8,14 @@ public sealed class Weather
     public Temperature Temperature { get; private set; }
     public string Description { get; private set; }
     public int Humidity { get; private set; }
-    public Coordinates Coordinates { get; private set; }
+    public Coordinates? Coordinates { get; private set; }
 
     public Weather(
         string city, 
         Temperature temperature, 
         string description, 
         int humidity,
-        Coordinates coordinates)
+        Coordinates? coordinates = null)
     {
         if (string.IsNullOrWhiteSpace(city))
             throw new ArgumentException("City cannot be empty.", nameof(city));
