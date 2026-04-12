@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using WeatherHub.Application.Common.Models;
 using WeatherHub.Application.DTOs;
+using WeatherHub.Application.UseCases.Favorites.AddFavorite;
+using WeatherHub.Application.UseCases.Favorites.GetFavorites;
 using WeatherHub.Application.UseCases.GetWeatherByCity;
 
 namespace WeatherHub.Api.Controllers;
@@ -33,5 +35,21 @@ public sealed class WeatherController : ControllerBase
         var result = await _mediator.Send(new SearchCitiesQuery(query), cancellationToken);
 
         return Ok(ApiResponse<IEnumerable<CityDto>>.Ok(result));
+    }
+
+    [HttpPost("favorites")]
+    public async Task<IActionResult> AddFavorite([FromBody] string city)
+    {
+        await _mediator.Send(new AddFavoriteCommand(city));
+
+        return Ok();
+    }
+
+    [HttpGet("favorites")]
+    public async Task<IActionResult> GetFavorites()
+    {
+        var favorites = await _mediator.Send(new GetFavoritesQuery());
+
+        return Ok(favorites);
     }
 }

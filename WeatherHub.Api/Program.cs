@@ -41,6 +41,7 @@ builder.Services.Configure<CacheOptions>(
 builder.Services.AddHttpClient<AemetWeatherProvider>();
 builder.Services.AddScoped<ICityCodeService, CityCodeService>();
 builder.Services.AddScoped<ICitySearchService, CitySearchService>();
+builder.Services.AddSingleton<IFavoriteRepository, InMemoryFavoriteRepository>();
 
 builder.Services.AddMemoryCache();
 

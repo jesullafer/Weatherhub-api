@@ -3,5 +3,6 @@
     public interface IFavoriteRepository
     {
         void Add(string city);
+        List<string> GetAll();
     }
 }
